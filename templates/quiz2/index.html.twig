@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Тест ОК{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><text y='1.2em' font-size='96'>⚫️</text><text y='1.3em' x='0.2em' font-size='76' fill='#fff'>sf</text></svg>">
+    <style>
+        body {
+            background: linear-gradient(to right, #dae2f8, #d6a4a4); /* Light blue to light red gradient */
+        }
+        .correct { color: green; }
+        .incorrect { color: red; }
+        .question-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #ffffff; /* Default background color for questions */
+        }
+        /* Alternate background colors */
+        .question-container:nth-child(odd) {
+            background-color: #f0f0f0; /* Light grey for odd questions */
+        }
+    </style>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<h1>Изберете дисциплина</h1>
+<form method="post" id="testForm">
+    <div class="form-group">
+        <select name="test" class="form-control" id="testSelect">
+            <option value="">Избери дисциплина...</option>
+            <option value="1">Тест 1 ИС</option>
+            <option value="2">Тест 2 ИС </option>
+            <option value="3">Тест 3 ИС</option>
+            <option value="4">Тест 4 ИС</option>
+            <option value="5">Тест 5 ИС </option>
+        </select>
+    </div>
+</form>
+
+<script>
+    document.getElementById('testSelect').addEventListener('change', function () {
+        var testValue = this.value;
+        var form = document.getElementById('testForm');
+        if (testValue) {
+            // Променете URL адреса според избора
+            var url = '/quiz/is/' + testValue+ '?page';
+            window.location.href = url;
+        }
+    });
+</script>
+<h1>Тест 2</h1>
+<form method="post">
+    {% for question in questions %}
+        <div class="question-container">
+            <p>Въпрос {{ loop.index }}: {{ question.question }}</p>
+            {% for answer in question.answers %}
+                {% if question.multipleCorrect %}
+                    <label>
+                        <input type="checkbox" name="question_{{ loop.parent.loop.index }}[]" value="{{ answer.id }}">
+                        {{ answer.text }}
+                    </label>
+                {% else %}
+                    <label>
+                        <input type="radio" name="question_{{ loop.parent.loop.index }}" value="{{ answer.id }}">
+                        {{ answer.text }}
+                    </label>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-outline-success">проверка</button>
+</form>
+{% if results is not empty %}
+    <h2>Резултати</h2>
+    {% for result in results %}
+        <div class="{% if result.isCorrect %}correct{% else %}incorrect{% endif %}">
+            Въпрос {{ loop.index }}: {{ result.question }}<br>
+            Вашият отговор: {% if result.isCorrect %}<span style="color: green;">{{ result.userAnswerTexts }}</span>{% else %}<span style="color: red;">{{ result.userAnswerTexts }}</span>{% endif %} е {% if result.isCorrect %}<strong style="color: green;">правилен</strong>{% else %}<strong style="color: red;">грешен</strong>. Верният отговор е: <span style="color: black;">{{ result.correctAnswerTexts }}</span>{% endif %}.
+        </div>
+    {% endfor %}
+    {% if grade is not null %}
+        <h2>Оценката ти е : {{ grade }}</h2>
+    {% endif %}
+{% else %}
+    <p>Моля, отговорете на въпросите и натиснете бутона за проверка.</p>
+{% endif %}
+<div class="d-flex justify-content-center">
+    <a href="{{ path('quiz_ok', {'page': 1}) }}" type="button" class="btn btn-primary btn-sm mr-2 btn-spacing"> 1 </a>
+    <a href="{{ path('quiz3') }}" type="button" class="btn btn-primary btn-sm mr-2 btn-spacing"> 3 </a>
+    <a href="{{ path('quiz4') }}" type="button" class="btn btn-primary btn-sm mr-2 btn-spacing"> 4 </a>
+    <!-- Без допълнителен margin отдясно за последния бутон -->
+    <a href="{{ path('quiz8', {'page': 8}) }}" type="button" class="btn btn-primary btn-sm"> 8 </a>
+</div>
+
+</body>
+</html>

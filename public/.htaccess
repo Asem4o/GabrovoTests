@@ -1,0 +1,6 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Пренасочване на всички заявки към /quiz/ към index.php
+    RewriteRule ^quiz/(.*)$ index.php [L]
+</IfModule>

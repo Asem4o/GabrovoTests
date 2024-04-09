@@ -1,0 +1,19 @@
+parameters:
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    # Вашият RedirectListener
+    App\EventListener\RedirectListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
